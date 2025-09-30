@@ -1,57 +1,29 @@
-name: Build & Deploy
+name: Build & Deploy to CapRover
 
 on:
   push:
-    branches: [ "main" ]
-
-  pull_request:
     branches: [ "main" ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      # Optional: run tests locally (not required for deployment)
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          node-version: 18
+      - run: npm install
+      - run: npm test --if-present
 
-      - name: Install dependencies
-        run: |
-          cd frontend
-          npm ci
-
-      - name: Build project
-        run: |
-          cd frontend
-          npm run build
-
-      - name: Run tests (optional)
-        run: |
-          cd frontend
-          npm run test --if-present
-
-      - uses: a7ul/tar-action@v1.1.0
-        with:
-          command: c
-          cwd: "./"
-          files: |
-            frontend/dist/
-            captain-definition
-          outPath: deploy.tar
-
+      # Deploy to CapRover (CapRover will use Dockerfile + captain-definition)
       - name: Deploy App to CapRover
         uses: caprover/deploy-from-github@v1.0.1
         with:
-          server: '${{ secrets.CAPROVER_SERVER }}'
-          app: '${{ secrets.APP_NAME }}'
-          token: '${{ secrets.APP_TOKEN }}'
+          server: ${{ secrets.CAPROVER_SERVER }}
+          app: ${{ secrets.APP_NAME }}
+          token: ${{ secrets.APP_TOKEN }}
