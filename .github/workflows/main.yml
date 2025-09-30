@@ -17,6 +17,6 @@ jobs:
         uses: caprover/deploy-from-github@v1.0.1
         with:
           server: ${{ secrets.CAPROVER_SERVER }}   # https://captain.server.com
-          app: ${{ secrets.CAPROVER_APP }}         # your CapRover app name
-          token: ${{ secrets.CAPROVER_TOKEN }}     # App Token from CapRover dashboard
+          app: ${{ secrets.APP_NAME }}         # your CapRover app name
+          token: ${{ secrets.APP_TOKEN }}     # App Token from CapRover dashboard
           branch: master                           # which branch to deploy
