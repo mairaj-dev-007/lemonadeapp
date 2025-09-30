@@ -31,7 +31,7 @@ COPY --from=builder /app/node_modules ./node_modules
 ENV NODE_ENV=production
 
 # Expose port (default for Next.js)
-EXPOSE 6000
+EXPOSE 80
 
 # Start Next.js server
 CMD ["npm", "start"]
