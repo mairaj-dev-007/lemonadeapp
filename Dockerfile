@@ -1,37 +1,40 @@
 # Step 1: Build stage
 FROM node:18-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and lock file first (for caching)
+# Copy package.json and lock file
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies (including devDependencies for build)
 RUN npm install
 
 # Copy the rest of the app
 COPY . .
 
-# Build the Next.js app
+# Build Next.js app
 RUN npm run build
 
-# Step 2: Run stage
+
+# Step 2: Production stage
 FROM node:18-slim AS runner
 
 WORKDIR /app
 
-# Copy only necessary files from builder
-COPY --from=builder /app/package*.json ./
+# Copy only production dependencies
+COPY package*.json ./
+RUN npm install --only=production
+
+# Copy built files from builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/node_modules ./node_modules
 
-# Set environment variable
+# Set env
 ENV NODE_ENV=production
+ENV PORT=3000
 
-# Expose port (default for Next.js)
-EXPOSE 6000
+# Expose the correct port
+EXPOSE 3000
 
 # Start Next.js server
-CMD ["npm", "start"]
+CMD ["npx", "next", "start", "-p", "3000"]
