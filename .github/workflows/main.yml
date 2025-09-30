@@ -1,23 +1,22 @@
-name: Build & Deploy to CapRover
+name: Deploy to CapRover
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main   # or "main" if your repo uses that
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Install CapRover CLI
-        run: npm install -g caprover
-
-      - name: Deploy App to CapRover
-        run: |
-          caprover deploy \
-            --host ${{ secrets.CAPROVER_SERVER }} \
-            --appToken ${{ secrets.APP_TOKEN }} \
-            --appName ${{ secrets.APP_NAME }}
+      - name: Deploy to CapRover
+        uses: caprover/deploy-from-github@v1.0.1
+        with:
+          server: ${{ secrets.CAPROVER_SERVER }}   # https://captain.server.com
+          app: ${{ secrets.CAPROVER_APP }}         # your CapRover app name
+          token: ${{ secrets.CAPROVER_TOKEN }}     # App Token from CapRover dashboard
+          branch: master                           # which branch to deploy
