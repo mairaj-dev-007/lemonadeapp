@@ -17,6 +17,6 @@ jobs:
         uses: caprover/deploy-from-github@v1.0.1
         with:
           server: ${{ secrets.CAPROVER_SERVER }}
-          app: ${{ secrets.CAPROVER_APP }}
-          token: ${{ secrets.CAPROVER_TOKEN }}
+          app: ${{ secrets.APP_NAME }}
+          token: ${{ secrets.APP_TOKEN }}
           branch: main
