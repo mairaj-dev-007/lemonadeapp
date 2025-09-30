@@ -12,18 +12,12 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      # Optional: run tests locally (not required for deployment)
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install
-      - run: npm test --if-present
+      - name: Install CapRover CLI
+        run: npm install -g caprover
 
-      # Deploy to CapRover (CapRover will use Dockerfile + captain-definition)
       - name: Deploy App to CapRover
-        uses: caprover/deploy-from-github@v1.0.1
-        with:
-          server: ${{ secrets.CAPROVER_SERVER }}
-          app: ${{ secrets.APP_NAME }}
-          token: ${{ secrets.APP_TOKEN }}
+        run: |
+          caprover deploy \
+            --host ${{ secrets.CAPROVER_SERVER }} \
+            --appToken ${{ secrets.APP_TOKEN }} \
+            --appName ${{ secrets.APP_NAME }}
